@@ -463,7 +463,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-04 19:31:02" itemprop="dateModified" datetime="2019-05-04T19:31:02+08:00">2019-05-04</time>
+                <time title="修改时间：2019-05-04 19:40:55" itemprop="dateModified" datetime="2019-05-04T19:40:55+08:00">2019-05-04</time>
               
             
           </span>
@@ -539,19 +539,28 @@ mobile:
 <h2 id="2-4-Markdown-图片"><a href="#2-4-Markdown-图片" class="headerlink" title="2.4 Markdown 图片"></a>2.4 Markdown 图片</h2><p>Markdown 图片语法格式如下：<code>![avatar](图片地址)</code> <code>![你想输入的替代文字](xxxx/图片名.jpg)</code> 两个都是一样的<br>开头一个感叹号 !接着一个方括号，里面放上图片的替代文字接着一个普通括号，里面放上图片的网址，最后还可以用引号包住并加上选择性的 ‘title’ 属性的文字。</p>
 <h3 id="2-4-1-插入本地图片"><a href="#2-4-1-插入本地图片" class="headerlink" title="2.4.1 插入本地图片"></a>2.4.1 插入本地图片</h3><p>只需要在基础语法的括号中填入图片的位置路径即可，支持绝对路径和相对路径。<br><code>![avatar](/cat.png)</code><br><code>![avatar](/cat_lovely.png)</code><br>显示结果如下：<img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/cat.png" alt="avatar">    <img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/cat_lovely.png" alt="avatar"></p>
 <h3 id="2-4-2-插入网络图片"><a href="#2-4-2-插入网络图片" class="headerlink" title="2.4.2 插入网络图片"></a>2.4.2 插入网络图片</h3><p>只需要在基础语法的括号中填入图片的网络链接即可，现在已经有很多免费/收费图床和方便传图的小工具可选。<br><code>![avatar](http://static.runoob.com/images/runoob-logo.png)</code><br>显示结果如下：<img src="http://static.runoob.com/images/runoob-logo.png" alt="avatar"></p>
-<h3 id="2-5-Markdown-表格"><a href="#2-5-Markdown-表格" class="headerlink" title="2.5 Markdown 表格"></a>2.5 Markdown 表格</h3><p>Markdown 制作表格使用 | 来分隔不同的单元格，使用 - 来分隔表头和其他行。在一句话前面加<code>&lt;</code>,表示引用，语法格式如下：  </p>
-<blockquote>
-<p>|  表头   | 表头  |  </p>
-</blockquote>
-<blockquote>
-<p>|  —-  | —-  |  </p>
-</blockquote>
-<blockquote>
-<p>| 单元格  | 单元格 | </p>
-</blockquote>
-<blockquote>
-<p>| 单元格  | 单元格 |  </p>
-</blockquote>
+<h3 id="2-5-Markdown-表格"><a href="#2-5-Markdown-表格" class="headerlink" title="2.5 Markdown 表格"></a>2.5 Markdown 表格</h3><p>Markdown 制作表格使用 | 来分隔不同的单元格，使用 - 来分隔表头和其他行。在一句话前面加<code>&gt;</code>,表示引用，语法格式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">| 左对齐标题 | 右对齐标题 | 居中对齐标题 |</span><br><span class="line">| :------| ------: | :------: |</span><br><span class="line">| 短文本 | 中等文本 | 稍微长一点的文本 |</span><br><span class="line">| 稍微长一点的文本 | 短文本 | 中等文本 |</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">左对齐标题</th>
+<th style="text-align:right">右对齐标题</th>
+<th style="text-align:center">居中对齐标题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">短文本</td>
+<td style="text-align:right">中等文本</td>
+<td style="text-align:center">稍微长一点的文本</td>
+</tr>
+<tr>
+<td style="text-align:left">稍微长一点的文本</td>
+<td style="text-align:right">短文本</td>
+<td style="text-align:center">中等文本</td>
+</tr>
+</tbody>
+</table>
 <h3 id="2-6-分隔线"><a href="#2-6-分隔线" class="headerlink" title="2.6 分隔线"></a>2.6 分隔线</h3><p>你可以在一行中用三个以上的星号、减号、底线来建立一个分隔线，行内不能有其他东西。</p>
 <hr>
 <hr>
@@ -794,7 +803,7 @@ show_date_time();
     <!-- 博客字数统计 -->
     <span class="site-pv">
       <i class="fa fa-pencil"></i>
-      博客全站共： <span class="post-count">1.7k</span> 字
+      博客全站共： <span class="post-count">1.8k</span> 字
     </span>
 </div>
 <!-- 新增访客统计代码 END-->
