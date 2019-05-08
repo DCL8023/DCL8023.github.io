@@ -463,7 +463,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-08 20:17:46" itemprop="dateModified" datetime="2019-05-08T20:17:46+08:00">2019-05-08</time>
+                <time title="修改时间：2019-05-08 21:32:03" itemprop="dateModified" datetime="2019-05-08T21:32:03+08:00">2019-05-08</time>
               
             
           </span>
@@ -498,173 +498,11 @@
 
       
         
-          <h1 id="网盘设计步骤"><a href="#网盘设计步骤" class="headerlink" title="网盘设计步骤"></a>网盘设计步骤</h1><h2 id="一：fastDFS"><a href="#一：fastDFS" class="headerlink" title="一：fastDFS"></a>一：fastDFS</h2><h3 id="fastDFS概述："><a href="#fastDFS概述：" class="headerlink" title="fastDFS概述："></a>fastDFS概述：</h3><p>分布式存储简单的来说，就是将数据分散存储到多个存储设备(服务器)上。是用c语言编写的一款开源的分布式文件系统。FastDFS是一款类GoogleFS的开源分布式文件系统，GoogleFS以及FastDFS、mogileFS、HDFS、TFS等类GoogleFS都不是系统级的分布式文件系统，而是应用级的分布式文件存储服务。FastDFS是为互联网应用量身定做的分布式文件系统，充分考虑了冗余备份、负载均衡、线性扩容等机制，并注重高可用、高性能等指标。和现有的类Google FS分布式文件系统相比，FastDFS的架构和设计理念有其独到之处，主要体现在轻量级、分组方式和对等结构三个方面。<br>fastDFS框架中的三个角色:</p>
-<blockquote>
-<p>   追踪器 - tracker<br>   存储节点 - storage<br>   客户端 - client </p>
-</blockquote>
-<p>架构简析，如图:<img src="/2019/05/06/云盘项目-服务器端/架构简析.png" alt="avatar"><br>我们可以通过 FastDFS 对文件的上传过程，来初步了解 FastDFS 的基本架构：<br>①　首先客户端client 发起对 FastDFS 的文件传输动作，是通过连接到某一台 Tracker Server 的指定端口来实现的；<br>②　Tracker Server 根据目前已掌握的信息，来决定选择哪一台 Storage Server ，然后将这个Storage Server 的地址等信息返回给 client；<br>③　然后 client 再通过这些信息连接到这台Storage Server，将要上传的文件传送到给 Storage Server上。</p>
-<h3 id="fastDFS的安装"><a href="#fastDFS的安装" class="headerlink" title="fastDFS的安装"></a>fastDFS的安装</h3><p>步骤1：先安装libfastcommon，安装libfastcommon为FastDFS操作的基础库，FastDFS没有使用标准的库，而是封装了一套和FastDFS相关的库。1)    解压压缩包-&gt; 2)    进入解压后的目录 -&gt;3)    编译代码：./make.sh -&gt;4)    安装：sudo ./make.sh install<br>步骤2：安装成功后，默认会复制到<code>/usr/lib64</code>下，由于系统不会自动在<code>/usr/lib64</code>找动态库，<br>需要创建软链接<code>sudo ln -s /usr/lib64/libfastcommon.so /usr/local/lib/libfastcommon.so</code><br>在VIM下显示行号和设置缩进，root用户，直接编译 /etc/vim/vimrc文件，在文件末尾添加如下两行设置命令： <code>set nu</code>设置行号，<code>set tabstop=8</code>，设置首行缩进8个空格。<br>在有时候，经常需要sudo命令，每次输入sudo比较麻烦，给普通用户添加sudo权限<br><code>sudo vim /etc/sudoers</code>在 <code>root    ALL=(ALL:ALL) ALL</code>后添加自己的用户名，如：<br> <code>itcast   ALL=(ALL:ALL) ALL</code></p>
-<p>步骤3：FastDFS安装过程和libfastcommon是一样的:，配置文件在/etc/fdfs</p>
-<h3 id="FastDFS的配置"><a href="#FastDFS的配置" class="headerlink" title="FastDFS的配置"></a>FastDFS的配置</h3><p>先配置tracker，再添加一个storage，每添加添加一个storage，实际上是storage连接tracker，tracker必须存在，否则storage无法加进来，client主要用于测试上传、下载文件。在/usr/fastdfs/目录下分别创建三个目录tracker storage client，命令：<code>sudo mkdir tracker storage client</code><br>配置文件在/etc/fdfs,分别是：<code>client.conf.sample  storage.conf.sample  storage_ids.conf.sample  tracker.conf.sample</code>。</p>
-<h4 id="tracker的配置"><a href="#tracker的配置" class="headerlink" title="tracker的配置"></a>tracker的配置</h4><p>1)    拷贝配置文件<br>执行命令：<code>sudo cp tracker.conf.sample tracker.conf</code> 然后打开配置文件<code>sudo vi  tracker.conf</code><br>如图：<img src="/2019/05/06/云盘项目-服务器端/tracker配置.png" alt="avatar"> </p>
-<h4 id="storage配置"><a href="#storage配置" class="headerlink" title="storage配置"></a>storage配置</h4><p>1)    拷贝配置文件<br>执行命令：<code>sudo cp storage.conf.sample storage.conf</code>然后打开配置文件<code>sudo vi  storage.conf</code><br>如图：<img src="/2019/05/06/云盘项目-服务器端/storage配置1.png" alt="avatar">   <img src="/2019/05/06/云盘项目-服务器端/storage配置2.png" alt="avatar"></p>
-<h4 id="client的配置"><a href="#client的配置" class="headerlink" title="client的配置"></a>client的配置</h4><p>1)    拷贝配置文件<br>执行命令：<code>sudo cp client.conf.sample client.conf</code> 然后打开配置文件<code>sudo vi  client.conf</code><br>如图：<img src="/2019/05/06/云盘项目-服务器端/client配置.png" alt="avatar"><br>然后，分别启动tracker，storage。<br>启动tracker 用 <code>sudo  fdfs_trackerd  etc/fdfs/tracker.conf</code>要在<code>/etc/fdfs</code>目录下<br>或者<code>sudo /usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf</code><br>启动Tracker服务</p>
-<blockquote>
-<p>fdfs_trackerd /etc/fdfs/tracker.conf</p>
-<blockquote>
-<p>sudo fdfs_trackerd /etc/fdfs/tracker.conf restart  重启        </p>
-<blockquote>
-<p>sudo fdfs_trackerd /etc/fdfs/tracker.conf stop 停止</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>启动storage 用 <code>sudo  fdfs_storaged etc/fdfs/storage.conf</code> 要在<code>/etc/fdfs</code>目录下<br>或者<code>sudo /usr/bin/fdfs_storaged /etc/fdfs/storage.conf</code>若有错误,可以在/usr/fastdfs目录下检查日志。<br>通过在目录/usr/bin下<code>fdfs_monitor /etc/fdfs/client.conf</code>测试storage状态，正常状态必须是ACTIVE，否则无法上传、下载文件。如图：<img src="/2019/05/06/云盘项目-服务器端/检测.png" alt="检测"><br>也可以通过这个命令查看 端口正在被监听，则算是服务安装成功 <code>netstat -unltp |grep fdfs</code>   </p>
-<font color="red">扩展：<br>查看端口是否被占用：<br>    netstat -apn | grep 80<br>查看占用某个端口的进程：<br>    sudo lsof -i:80<br>关键字搜索某个进程:<br>    ps -aux | grep fdfs<br></font><br>步骤3：上传、下载测试<br> 上传测试 ：<code>fdfs_upload_file  /etc/fdfs/client.conf abc.txt</code><br> 下载测试 ：<code>fdfs_download_file  /etc/fdfs/client.conf group1/M00/00/00/wKhVgVzQP0mAbOTIAAAALYDORqY381.txt</code><br> 删除测试 ：<code>fdfs_delete_file  /etc/fdfs/client.conf  group1/M00/00/00/wKhS_VlrEfOAdIZyAAAJTOwCGr43848.txt</code><br><strong>*<em><br>## 二：缓存数据库：redis<br>### Redis的概述<br>redis是一个开源的key-value存储系统。与memcached类似，redis将大部分数据存储在内存中。redis支持的数据类型包括：字符串、 哈希表、链表、集合、有序集合以及基于这些数据类型的相关操作。简单而言，redis基于内存操作，读写速度很快，100000读写/秒，可以作为内存型缓存服务器，提供持久化存储方案，可以作为结构不复杂的数据库使用。操作都是原子的：所有 redis 的操作都是原子(所谓原子操作，就是该操作绝不会在执行完毕前被任何其他任务或事件打断，也就说，它是最小的执行单位，不可能有比它更小的执行单位)。<br>特点：redis是完全在内存中保存数据的数据库，使用磁盘只是为了持久性目的。<br>### redis的安装<br>&gt;1)    解压压缩包：tar -zxvf redis-3.2.1.tar.gz<br>&gt;2)    进入解压后的目录，编译源码：make<br>&gt;3)    安装：sudo make install<br>&gt;4) 打开一个终端，启动服务器：redis-server<br>&gt;5)  打开另外一个终端，链接服务器：redis-cli，客户端连接，默认连本机，,得到127.0.0.1:6379&gt; 输入ping  得到&gt;&gt;pong  也可远程链接：<code>redis-cli -h 192.168.85.129</code><br>### redis客户端编程<br>hiredis是redis开源库对外发布的客户端API包。当redis-server配置启动后，可以通过hiredis操作redis资源。
-</em></strong><br>## 三：持久化数据库：MySQL<br>### 安装Mysql<br>ubuntu彻底卸载mysql并且重新安装<br>首先删除mysql:<code>sudo apt-get remove mysql-*</code><br>然后清理残留的数据<code>dpkg -l |grep ^rc|awk &#39;{print $2}&#39; |sudo xargs dpkg -P</code><br>它会跳出一个对话框，你选择yes就好了<br>然后安装mysql,在线安装命令：<br>&gt;sudo apt-get install mysql-server<br>&gt;sudo apt-get install mysql-client<br>&gt;sudo apt-get install libmysqlclient-dev<br><br>安装的时候会提示要设置root密码，如果你没有在卸载的时候去清理残留数据是不会提示你去设置root密码的<br>检查mysql是不是在运行<code>sudo service mysql status</code><br>一般安装完成之后都是会自动运行的。 如果没有运行你可以<code>sudo service mysql start</code>运行它<br>查看是否安装成功：<br>&gt;sudo netstat -tap | grep mysql<br>### 登录Mysql<br>&gt; （1）命令行登录 ： mysql  -u root -p<br>&gt;   -u 表示选择登陆的用户名 -p 表示登陆的用户密码<br>&gt;  （2）重启Mysql ：sudo service mysql restart<br>&gt; （3）Windows 客户端远程登录用Navicat<br><br>如果想远程登录数据库，需要开启服务器下的MySQL远程访问权限：<br>(1)在目录 /etc/mysql/mysql.conf.d下找到my.cnf，用vim编辑：<br>(2)找到mysqld.cnf里面的 bind-address = 127.0.0.1 将其注释：<br>(3)然后用root本地登陆MySQL数据库：查看 当前的数据库<br><img src="/2019/05/06/云盘项目-服务器端/命令.png" alt="Mysql"><br>(4)然后在mysql&gt;这里输入：<code>grant all privileges on 库名.表名 to &#39;用户名&#39;@&#39;IP地址&#39; identified by &#39;密码&#39; with grant option;</code> 允许用户XXX从ip为192.168.x.x的主机连接到mysql服务器，并使用password作为密码<br>&gt;库名: 要远程访问的数据库名称,所有的数据库使用“<em>”<br>&gt;<br>&gt;表名: 要远程访问的数据库下的表的名称，所有的表使用“</em>”<br>&gt;<br>&gt;用户名: 要赋给远程访问权限的用户名称<br>&gt;<br>&gt;IP地址: 可以远程访问的电脑的IP地址，所有的地址使用“%”<br>&gt;<br>&gt;密码: 要赋给远程访问权限的用户对应使用的密码<br><br><img src="/2019/05/06/云盘项目-服务器端/mysql.png" alt="Mysql"><br><br>5) 最后刷新一下。执行：<code>flush privileges;</code><br><font color="red">注：数据库必须重启<code>sudo /etc/init.d/mysql restart</code>或者<code>sudo service mysql restart</code></font>  
-
-<p>远程登陆用Navicat，它 是一套数据库管理工具，专为简化数据库的管理及降低系统管理成本而设。它的设计符合数据库管理员、开发人员及中小企业的需要。Navicat 是以直觉化的图形用户界面而建的，让你可以以安全并且简单的方式创建、组织、访问并共用信息。Navicat可以用来对本机或远程的 MySQL、SQL Server、SQLite、Oracle 及 PostgreSQL 数据库进行管理及开发。</p>
-<hr>
-<h2 id="四：nginx"><a href="#四：nginx" class="headerlink" title="四：nginx"></a>四：nginx</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>低耦合设计的模块组成,丰富的第三方模块支持高可靠每个worker进程相对独立, 出错之后可以快速开启新的worker,master和worker的分离设计,可实现7x24小时不间断服务的前提下升级 nginx可执行文件。</p>
-<h3 id="nginx相关安装"><a href="#nginx相关安装" class="headerlink" title="nginx相关安装"></a>nginx相关安装</h3><blockquote>
-<p>Nginx相关依赖: OpenSSL: 数据加密  </p>
-<p>PCRE下载:解析正则表达式，因为Nginx的HTTP模块要靠它来解析正则表达式。   </p>
-<p>ZLib下载:压缩解压缩，zlib是提供数据压缩用的函式库，zlib能使用一个gzip数据头，zlib数据头或者不使用数据头压缩数据。因为在Nginx配置文件nginx.conf配置了gzip on，并指定了某些类型(content-type)的HTTP响应使用gzip来进行压缩以减少网络传输量，所以编译时必须把zlib库编译进Nginx。</p>
-</blockquote>
-<h4 id="OpenSSL安装"><a href="#OpenSSL安装" class="headerlink" title="OpenSSL安装"></a>OpenSSL安装</h4><p>安装 OpenSSL两种方法<br>安装基础编译环境： <code>apt-get install build-essential</code><br>查看OpenSSL版本 <code>openssl version –a</code><br>查看动态库：<code>ldd /usr/local/openssl/bin/openssl</code>  ,结果如下：</p>
-<blockquote>
-<p>linux-gate.so.1 =&gt;  (0x0079f000)</p>
-</blockquote>
-<pre><code>libssl.so.1.1 =&gt; /usr/local/openssl/lib/libssl.so.1.1 (0x002a8000)
-libcrypto.so.1.1 =&gt; /usr/local/openssl/lib/libcrypto.so.1.1 (0x00306000)
-libz.so.1 =&gt; /lib/libz.so.1 (0x00775000)
-libdl.so.2 =&gt; /lib/libdl.so.2 (0x00725000)
-libpthread.so.0 =&gt; /lib/libpthread.so.0 (0x0072c000)
-libc.so.6 =&gt; /lib/libc.so.6 (0x00593000)
-/lib/ld-linux.so.2 (0x0056d000)
-</code></pre><p>查看路径 <code>which openssl</code> 可得<code>/usr/local/openssl/bin/openssl</code></p>
-<ol>
-<li>which<br>指令搜索。<br>which [-a] command<br>-a ：将所有指令列出，而不是只列第一个</li>
-<li>whereis<br>文件搜索。速度比较快，因为它只搜索几个特定的目录。<br>whereis [-bmsu] dirname/filename</li>
-<li>locate<br>文件搜索。可以用关键字或者正则表达式进行搜索。<br>locate 使用 /var/lib/mlocate/ 这个数据库来进行搜索，它存储在内存中，并且每天更新一次，所以无法用 locate 搜索新建的文件。可以使用 updatedb 来立即更新数据库。<br>locate [-ir] keyword<br>-r：正则表达式</li>
-<li>find<br>文件搜索。可以使用文件的属性和权限进行搜索。<br>find [basedir] [option]<br>example: find . -name “shadow*”<br>卸载旧版本OpenSSL<br>　apt-get purge openssl<br>rm -rf /etc/ssl #删除配置文件<blockquote>
-<p>方法一，编译安装OpenSSL （prefix 是安装目录，openssldir是配置文件目录，另外建议安装两次，shared作用是生成动态链接库）<br>wget <a href="ftp://ftp.openssl.org/source/openss-1.0.0c.tar.g" target="_blank" rel="noopener">ftp://ftp.openssl.org/source/openss-1.0.0c.tar.g</a><br>tar -zxv openssl-1.0.0c.tar.gz<br>cd openssl-1.0.0c/<br>./config –prefix=/usr/local –openssldir=/usr/local/openssl<br>make &amp;&amp; make install<br>./config shared –prefix=/usr/local –openssldir=/usr/local/opssl<br>make clean<br>make  &amp;&amp; make install<br>方法二：安装openssl  <strong>(在libevent服务器中用的)</strong><br>wget <a href="http://www.openssl.org/source/openssl-1.0.1t.tar.gz" target="_blank" rel="noopener">http://www.openssl.org/source/openssl-1.0.1t.tar.gz</a><br>tar -zxvf openssl-1.0.1c.tar.gz<br>./config  –prefix=/usr/local –openssldir=/usr/local/openssl<br>make depend<br>make<br>sudo make install<br>//若要生成libssl.so动态库文件 需要如下make<br>make clean<br>./config shared –prefix=/usr/local –openssldir=/usr/local/openssl<br>make depend<br>make<br>sudo make install<br><strong>这里要注意，在执行./config的时候一定要加上 –prefix=/usr/local 和–openssldir=/usr/local/openssl/否则libevent是找不到openssl库，那就不会编译生成带有openssl的libevent库了。</strong></p>
-</blockquote>
-</li>
-</ol>
-<h4 id="PCRE安装"><a href="#PCRE安装" class="headerlink" title="PCRE安装"></a>PCRE安装</h4><p>编译和安装PCRE库相关命令：</p>
-<blockquote>
-<p>a.    tar -zxvf pcre-8.39.tar.gz<br>b.    cd pcre-8.39/<br>c.    ./configure<br>d.    make<br>e.    sudo make install</p>
-</blockquote>
-<h4 id="ZLib安装"><a href="#ZLib安装" class="headerlink" title="ZLib安装"></a>ZLib安装</h4><p>编译安装zlib库</p>
-<blockquote>
-<p>tar -zxf zlib-1.2.5.tar.g<br>　　<br>cd zlib-1.2.5/<br>./configure –prefix=/usr/local<br>make &amp;&amp; make install</p>
-</blockquote>
-<h4 id="nginx的安装"><a href="#nginx的安装" class="headerlink" title="nginx的安装"></a>nginx的安装</h4><p>编译和安装Nginx相关命令：</p>
-<blockquote>
-<p>a.    tar -zxvf nginx-1.10.1.tar.gz<br>b.    cd nginx-1.10.1/<br>c.    ./configure<br>d.    make<br>e.    sudo make install</p>
-</blockquote>
-<h3 id="nginx的启动与关闭"><a href="#nginx的启动与关闭" class="headerlink" title="nginx的启动与关闭"></a>nginx的启动与关闭</h3><p>确保系统的 80 端口没被其他程序占用，运行/usr/local/nginx/nginx 命令来启动 Nginx命令：<code>sudo ./nginx</code>。   </p>
-<blockquote>
-<p>netstat -ano|grep 80<br>如果查不到结果后执行，有结果则忽略此步骤（ubuntu下必须用sudo启动，不然只能在前台运行）<br>sudo /usr/local/nginx/ngin<br>打开浏览器访问此机器的 IP，如果浏览器出现 Welcome to nginx! 则表示 Nginx 已经安装并运行成功。</p>
-</blockquote>
-<p>重启Nginx<br><code>sudo /usr/local/sbin/nginx -s reload</code><br>关闭Nginx<br>快速停止服务<code>sudo /usr/local/sbin/nginx -s stop</code><br>如果想在任何目录下启动nginx还可以修改环境变量或者通过软连接的形式<br>环境变量都存在如下目录，用命令：echo $PATH 得到环境变量都存在的目录<br>用软连接：<code>sudo ln -s /usr/local/nginx/sbin/nginx  /usr/bin/nginx</code><br>启动:sudo nginx<br>重新加载:sudo nginx -s reload</p>
-<h3 id="Nginx相关配置"><a href="#Nginx相关配置" class="headerlink" title="Nginx相关配置"></a>Nginx相关配置</h3><p>一个master进程来管理多个work进程.work进程数量和CPU的核数相同(进程间切换的代价最小)。<br>在/usr/local/nginx/conf中配置服务器  vi nginx.conf<br>配置文件的组织结构:<img src="/2019/05/06/云盘项目-服务器端/结构图.png" alt="结构图">    </p>
-<blockquote>
-<p>   main: 代表整个配置文件<br>   http: 处理web请求<br>    server: 代表一个web服务器<br>    location: web服务器要处理的一个指令<br>   mail: 处理邮件相关的协议</p>
-</blockquote>
-<p>如果在目录demo/hello/index.html则在nginx.conf服务器配置如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">       location  /hello/index.html &#123;   </span><br><span class="line">                  root  demo;</span><br><span class="line">                  index index.html;  //index: 要打开的网页</span><br><span class="line">&#125;    </span><br><span class="line"></span><br><span class="line">```          </span><br><span class="line">&gt;1:正向代理     </span><br><span class="line">描述:代理内部网络对Internet的连接请求客户机必须指定代理服务器     </span><br><span class="line">&gt;2:反向代理</span><br><span class="line">&gt;描述:反向代理(reverse proxy)方式是指用代理服务器来接受Internet上的连接请求,然后 将请求转发给内部网络中的上</span><br><span class="line">&gt;游服务器,并将从上游服务器上得到的结果返回给Internet请 求连接的客户端,此时代理服务器对外的表现就是一个web服务&gt;器。    </span><br><span class="line">&gt;一般情况下,nginx在前端抗负载和处理静态页面请求,上游服务器可以挂接Apche/ Tomcat等处理复杂业务的动态Web服务</span><br><span class="line">&gt;器。如：在Windows端打开反向代理服务器客户端，Windows下如何在当前目录下，打开cmd命令窗口，在当前目录下，按下&gt;shift + 鼠标右键，会出现“在此处打开命令窗口”的字样，然后点击即可，打开nginx。   作为一台代理服务器，服务器&gt;A:IP 172.16.0.35 ，服务器B:IP 172.16.0.138，服务器C:IP 172.16.0.70均作为普通的web服务器。    </span><br><span class="line">      </span><br><span class="line">大致配置如下：             </span><br><span class="line">```      </span><br><span class="line">     http&#123;       </span><br><span class="line"></span><br><span class="line">         include       mime.types;   </span><br><span class="line">     	default_type  application/octet-stream;   </span><br><span class="line"></span><br><span class="line">    	sendfile        on;</span><br><span class="line">   		 keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    #配置均衡服务器,,负载均衡是在反向代理的基础上做的</span><br><span class="line">    upstream backup.com &#123;</span><br><span class="line">	#默认情况下会理请求的机会均等,	weight=数字,数字没有上限,最小值 1</span><br><span class="line"></span><br><span class="line">        server  172.16.0.138:80 weight=5;#服务器B</span><br><span class="line">        server  172.16.0.70:80 weight=1; #服务器C</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  localhost;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            #配置反向代理功能</span><br><span class="line">            proxy_pass http://backup.com;</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line"> &#125;      </span><br><span class="line">```         </span><br><span class="line"></span><br><span class="line">&gt;在浏览器输入 服务器A的ip地址，也就是反向代理的地址: 172.16.0.35,会发现，通过访问服务器A，最终处理客户端请求的确实服务器B和服务器C。这种就是利用Nginx实现了反向代理。</span><br><span class="line">&gt;更多nginx的配置详见一位老师写的配置信息[nginx的配置](https://aceld.gitbooks.io/nginx-zh/content/4_nginxxiang_guan_pei_zhi.html )   </span><br><span class="line">   </span><br><span class="line">## FastCGI（丰富的第三方软件）</span><br><span class="line">### FastCGI概述       </span><br><span class="line">快速通用网关接口(Fast Common Gateway Interface／FastCGI)是通用网关接口(CGI)的改进，描述了客户端和服务器程序之间传输数据的一种标准。可以让一个客户端，从网页浏览器向执行在网络服务器上的程序请求数据。CGI这种技术可以使Web服务器成为动态的，所谓动态的就是，大家都访问相同的资源，但是得到的结果是不一样的。</span><br><span class="line">因此许多公司将他们的服务，通过这种方式暴露出来，这些服务器不是提供网页服务，而是提供应用信息服务的，这种称之为应用服务器。比如微信的开放平台，就有些服务是通过URL方式暴露出来供客户使用的。</span><br><span class="line">FastCGI致力于减少Web服务器与CGI程式之间互动的开销，从而使服务器可以同时处理更多的Web请求。与为每个请求创建一个新的进程不同，FastCGI使用持续的进程来处理一连串的请求。这些进程由FastCGI进程管理器管理，而不是web服务器。CGI 是所谓的短生存期应用程序，FastCGI 是所谓的长生存期应用程序。FastCGI像是一个常驻(long-live)型的CGI，它可以一直执行着，不会每次都要花费时间去fork一次(这是CGI最为人诟病的fork-and-execute 模式)。由于FastCGI进程由FastCGI进程管理器管理，而不是Nginx。这样就需要一个FastCGI进程管理器，管理我们编写FastCGI程序 spawn-fcgi是一个通用的FastCGI进程管理器，简单小巧，原先是属于lighttpd的一部分，后来由于使用比较广泛，所以就迁移出来作为独立项目。</span><br><span class="line">spawn-fcgi使用pre-fork 模型，功能主要是打开监听端口，绑定地址，然后fork-and-exec创建我们编写的FastCGI应用程序进程，退出完成工作。FastCGI应用程序初始化，然后进入死循环侦听socket的连接请求。   </span><br><span class="line">nginx 下 fastcgi 与服务器是分离的,如图所示：</span><br><span class="line">![fastcgi](/云盘项目-服务器端/fastcgi.png)</span><br><span class="line">### 步骤1：安装spawn-fcgi</span><br><span class="line">编译和安装spawn-fcgi相关命令：</span><br><span class="line">&gt;a.	tar -zxvf spawn-fcgi-1.6.4.tar.gz   </span><br><span class="line">&gt;b.	cd spawn-fcgi-1.6.4/   </span><br><span class="line">&gt;c.	./configure   </span><br><span class="line">&gt;d.	make    </span><br><span class="line">&gt;e.	sudo make install</span><br><span class="line">### 步骤2：编译和安装fastCGIi</span><br><span class="line">#### 和编译和安装spawn-fcgi一样 。 </span><br><span class="line">注意：fastCGI的安装</span><br><span class="line">./configure后make提示EOF没定义</span><br><span class="line">找find  ./ -name  fcgio.cpp/fcgio.h</span><br><span class="line">在里面添加# include &lt;stdio.h&gt; 包含在任何一个中完成nginx和fastcgi之间的进程间通信，是父子进程的通信。</span><br><span class="line">如图：![进程](/云盘项目-服务器端/流程图.png)     </span><br><span class="line">&lt;font color=red &gt;在这儿配置nginx时候需要添加fastcgi模块&lt;/font&gt;      </span><br><span class="line"> </span><br><span class="line">```   </span><br><span class="line">location /test&#123;    </span><br><span class="line">   </span><br><span class="line">       # 配置fastcgi模块</span><br><span class="line">       fastcgi_pass 127.0.0.1:9001;</span><br><span class="line">       #本机的真实IP地址 192.168.82.253端口:将要处理的数据发送到9001端口9001端口对应一个进程, 该进程可以收到nginx发送过来的数据</span><br><span class="line">       include fastcgi.conf;                                                                </span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">```      </span><br><span class="line"></span><br><span class="line">test让spawn成功管理，如图：![fastcgi管理](/云盘项目-服务器端/fastcgi管理.png)</span><br><span class="line">#### spawn-fcgi的使用</span><br><span class="line">#### 编写一个fastcgi程序,程序名为 test.c </span><br><span class="line">*****</span><br><span class="line">```   </span><br><span class="line">   </span><br><span class="line">     #include &lt;stdio.h&gt;</span><br><span class="line">     #include &lt;stdlib.h&gt;</span><br><span class="line">     #include &lt;string.h&gt;</span><br><span class="line">  	 #include &lt;unistd.h&gt;</span><br><span class="line">  	 #include &quot;fcgi_stdio.h&quot;</span><br><span class="line"></span><br><span class="line">	int main(int argc, char *argv[])</span><br><span class="line">	&#123;</span><br><span class="line">		int count = 0;</span><br><span class="line"></span><br><span class="line">	//阻塞等待并监听某个端口，等待Nginx将数据发过来</span><br><span class="line">	while (FCGI_Accept() &gt;= 0)</span><br><span class="line">	&#123;</span><br><span class="line">		//如果想得到数据，需要从stdin去读，实际上从Nginx上去读</span><br><span class="line">		//如果想上传数据，需要往stdout写，实际上是给Nginx写数据</span><br><span class="line">		printf(&quot;Content-type: text/html\r\n&quot;);</span><br><span class="line">		printf(&quot;\r\n&quot;);</span><br><span class="line">		printf(&quot;&lt;title&gt;Fast CGI Hello!&lt;/title&gt;&quot;);</span><br><span class="line">		printf(&quot;&lt;h1&gt;Fast CGI Hello!&lt;/h1&gt;&quot;);</span><br><span class="line">		//SERVER_NAME：得到server的host名称</span><br><span class="line">		printf(&quot;Request number %d running on host &lt;i&gt;%s&lt;/i&gt;\n&quot;, ++count, getenv(&quot;SERVER_NAME&quot;));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>重新配置nginx.conf,<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">     location /test&#123;    </span><br><span class="line">  </span><br><span class="line">      # 配置fastcgi模块</span><br><span class="line">      fastcgi_pass 127.0.0.1:9001;</span><br><span class="line">      #本机的真实IP地址 192.168.82.253端口:将要处理的数据发送到9001端口9001端口对应一个进程, 该进程可以收到nginx发送过来的数据</span><br><span class="line">      fastcgi_index test;</span><br><span class="line">      include fastcgi.conf;                                                                </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>将上传的文件的内容 - 提交到fastdfs存储节点将上传文件内容保存到web服务器<br>调用fastdfs api将文件上传到fastdfs存储节点上得到一文件ID，将文件和对应的fastdfs返回的文件ID存储到mysql数据库，将上传之后的文件从web服务器删除</p>
-<blockquote>
-<p>gcc echo.c -lfcgi -o test  指定输出为test.o<br>gcc echo.c -lfcgi 不指定，默认为a.out<br>spawn-fcgi -a IP -p 端口 -f fastcgi程序<br>-a - IP:  服务器IP地址<br>-p - port: 服务器将数据发送到的端口<br>-f - cgi程序: spawn-fcgi启动的可执行fastcgi程序<br>注意：执行a.out程序时候，发现找不到动态库<br>查找a.out 缺少的动态库    ldd   a.out<br>若找不到库 libfcgi.so.0 则 查找库，find  /usr/local/lib -name “ libfcgi.so”，然后在 vi /etc/ld.so.conf 添加路径/usr/local/lib<br>然后执行sudo ldconfig<br>当Nginx收到<a href="http://localhost/test请求时，会匹配到location" target="_blank" rel="noopener">http://localhost/test请求时，会匹配到location</a> test块，将请求传到后端的FastCGI应用程序处理：<br>如图：<img src="/2019/05/06/云盘项目-服务器端/显示.png" alt="显示"> </p>
-</blockquote>
-<h3 id="步骤3：部署web页面实现文件上传操作"><a href="#步骤3：部署web页面实现文件上传操作" class="headerlink" title="步骤3：部署web页面实现文件上传操作"></a>步骤3：部署web页面实现文件上传操作</h3><p>配置nginx.conf 时出错，[emerg] duplicate location “/“ 是由于出现重复的/定义，出现了两个根目录，删除一个就可以<br>如图：<img src="/2019/05/06/云盘项目-服务器端/错误.png" alt="错误">   </p>
-<h4 id="改进下载流程：直接通过浏览器下载服务器的图片"><a href="#改进下载流程：直接通过浏览器下载服务器的图片" class="headerlink" title="改进下载流程：直接通过浏览器下载服务器的图片"></a>改进下载流程：直接通过浏览器下载服务器的图片</h4><p>通过浏览器访问web服务器拿到一个地址, 直接通过这个地址, 来访问storage上的图片如何实现?<br>有一个storage服务器，在上边部署一个nginx服务器需要在nginx中添加一fastdfs模块fastdfs-nginx-module， nginx上使用FastDFS的模块fastdfs-nginx-module，这样做最大的好处就是提供了HTTP服务并且解决了group中storage服务器的同步延迟问题。<br>注意：全部安装条件在确保之前的FastDFS 的tracker、storage和client可以正常使用。</p>
-<h5 id="步骤1：模块fastdfs-nginx-module的安装"><a href="#步骤1：模块fastdfs-nginx-module的安装" class="headerlink" title="步骤1：模块fastdfs-nginx-module的安装"></a>步骤1：模块fastdfs-nginx-module的安装</h5><ol>
-<li>先安装nginx在fastdfs的storage服务器上安装    </li>
-<li>下载fastdfs-nginx-module_v1.16.tar.gz 并解压   </li>
-<li>cd fastdfs-nginx-module/ 会发现里面有个INSTALL 和 src目录，这个不需要make而是需要重新编译一下storage的Nginx模块。    </li>
-<li>安装和编译Nginx 并添加FastDFS模块<br>进入到nginx的安装目录<br>./configure –add-module=fastdfs-module的src目录<br>./configure–add-module=/home/robin/package/nginx/fastdfs-nginx-module/src<br>其中/usr/local/src/fastdfs-nginx-module/src 是刚才解压的fastdfs模块的绝对路径，就是在编译Nginx时候，连同这个模块一起编译。   </li>
-<li>make<blockquote>
-<p>fatal error: fdfs_define.h: No such file or directory<br>fatal error: common_define.h: No such file or directory   </p>
-</blockquote>
-</li>
-</ol>
-<p>第一种解决方法：  </p>
-<p>vi 打开makefile目录下边的 objs/Makefile,在这个makefile中添加两个头文件,<img src="/2019/05/06/云盘项目-服务器端/添加.png" alt="添加">  </p>
-<p>第二种解决方法：<br>原因是Nginx是会想/usr/local/include/fastdfs/去找， 而不是去/usr/include/fastdfs/去找，将/usr/include/fastdfs/ 和 /usr/include/fastcommon/ 两个文件夹拷贝到/usr/local/include/下即可：  </p>
-<blockquote>
-<p>sudo cp /usr/include/fastdfs/ /usr/local/include/ -R<br>sudo cp /usr/include/fastcommon/ /usr/local/include/ -R</p>
-</blockquote>
-<ol start="6">
-<li>make install   </li>
-<li>启动nginx, 只有一个master没有worker<br>查看日志文件<blockquote>
-<p>/usr/local/nginx/logs/error.log<br>ERROR - file: shared_func.c, line: 968, file /etc/fdfs/mod_fastdfs.conf not exist   </p>
-</blockquote>
-</li>
-</ol>
-<p>拷贝fastdfs-nginx-module/src中的mod_fastdfs.conf到/etc/fdfs中</p>
-<blockquote>
-<p>ERROR - file: ini_file_reader.c, line: 631, include file “http.conf” not exists, line: “#include http.conf”     </p>
-</blockquote>
-<p>类似这种错误会导致nginx-worker启动失败，致使nginx无法提供web服务。<br>从fastDFS的源码安装包中的conf中 将http.conf 拷贝到 /etc/fdfs<br>从nginx的源码安装包中的conf中mime.types拷贝到 /etc/fdfs   </p>
-<hr>
-<h5 id="步骤1-配置nginx"><a href="#步骤1-配置nginx" class="headerlink" title="步骤1:配置nginx"></a>步骤1:配置nginx</h5><p>添加location<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">    location /group1/M00&#123;</span><br><span class="line">                    root /home/robin/fastDFS/storage/data;</span><br><span class="line">                    #/home/robin/fastDFS/storage/data - fastDFS的storage存储数据的真实目录</span><br><span class="line">                    ngx_fastdfs_module;   // fastdfs模块的名字</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>重新加载nginx的配置文件</p>
-<h5 id="步骤2：mod-fastdfs-conf的配置"><a href="#步骤2：mod-fastdfs-conf的配置" class="headerlink" title="步骤2：mod_fastdfs.conf的配置"></a>步骤2：mod_fastdfs.conf的配置</h5><p>一定参照当前存储节点storage的配置文件修改   </p>
-<hr>
-<blockquote>
-<p>base_path=/home/robin/fastDFS/storage    </p>
-</blockquote>
-<p>追踪器的地址</p>
-<blockquote>
-<p>tracker_server=192.168.82.253:22122</p>
-</blockquote>
-<p>当前存储节点的端口   </p>
-<blockquote>
-<p>storage_server_port=23000</p>
-</blockquote>
-<p>当前存储节点所属的组</p>
-<blockquote>
-<p>group_name=group1</p>
-</blockquote>
-<p>浏览器访问的时候, url中是否包含组名</p>
-<blockquote>
-<p>url_have_group_name = true </p>
-</blockquote>
-<p>当前存储节点存储路径的个数</p>
-<blockquote>
-<p>store_path_count=1 </p>
-</blockquote>
-<p>当前存储节点的存储路径</p>
-<blockquote>
-<p>store_path0=/home/robin/fastDFS/storage </p>
-</blockquote>
-<p>如果有多个, 需要全部写到配置文件中</p>
-<blockquote>
-<p> store_path1<br> store_path2</p>
-</blockquote>
-<p>整个的fastDFS文件系统一共有多少个组</p>
-<blockquote>
-<p>group_count = 1</p>
-</blockquote>
-<p>每个组的信息</p>
-<blockquote>
-<p>[group1]<br>group_name=group1<br>storage_server_port=23000<br>tore_path_count=1<br>store_path0=/home/robin/fastDFS/storage     </p>
-</blockquote>
-<hr>
-<h5 id="步骤三：-建立软连接"><a href="#步骤三：-建立软连接" class="headerlink" title="步骤三： 建立软连接"></a>步骤三： 建立软连接</h5><p>ln -s /usr/fastdfs/fastdfs0/data /usr/fastdfs/fastdfs0/data/M00     </p>
-<h5 id="步骤四：启动storage和nginx"><a href="#步骤四：启动storage和nginx" class="headerlink" title="步骤四：启动storage和nginx"></a>步骤四：启动storage和nginx</h5><blockquote>
-<p>/usr/bin/fdfs_storaged /etc/fdfs/storage.conf restart</p>
-</blockquote>
-<blockquote>
-<p>/usr/local/nginx/sbin/nginx -s reload    </p>
-</blockquote>
-<p>通过fdfs_monitor /etc/fdfs/storage.conf<br>看看本台storage服务器是否处于ACTIVE状态。如果可以表示可以通过client上传和下载文件。<br>打开浏览器输入：<a href="http://192.168.31.109/group1/M00/00/00/wKgfbVhnpGSANaaNAAFbrNWRkBM855.jpg" target="_blank" rel="noopener">http://192.168.31.109/group1/M00/00/00/wKgfbVhnpGSANaaNAAFbrNWRkBM855.jpg</a><br>如果，得到图片显示，则表示storage已经成功配置Nginx服务。</p>
+          <h1 id="网盘设计步骤"><a href="#网盘设计步骤" class="headerlink" title="网盘设计步骤"></a>网盘设计步骤</h1><h2 id="一：fastDFS"><a href="#一：fastDFS" class="headerlink" title="一：fastDFS"></a>一：fastDFS</h2><h3 id="fastDFS概述："><a href="#fastDFS概述：" class="headerlink" title="fastDFS概述："></a>fastDFS概述：</h3><p>分布式存储简单的来说，就是将数据分散存储到多个存储设备(服务器)上。是用c语言编写的一款开源的分布式文件系统。FastDFS是一款类GoogleFS的开源分布式文件系统，GoogleFS以及FastDFS、mogileFS、HDFS、TFS等类GoogleFS都不是系统级的分布式文件系统，而是应用级的分布式文件存储服务。FastDFS是为互联网应用量身定做的分布式文件系统，充分考虑了冗余备份、负载均衡、线性扩容等机制，并注重高可用、高性能等指标。和现有的类Google FS分布式文件系统相比，FastDFS的架构和设计理念有其独到之处，主要体现在轻量级、分组方式和对等结构三个方面。<br></p>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2019/05/06/云盘项目-服务器端/#more" rel="contents">
+              <a class="btn" href="/2019/05/06/云盘项目-服务器端/" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -747,7 +585,7 @@ libc.so.6 =&gt; /lib/libc.so.6 (0x00593000)
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/05/06/Linux学习/" class="post-title-link" itemprop="url">Linux学习（一）---常用命令</a>
+                <a href="/2019/05/06/Linux学习/" class="post-title-link" itemprop="url">未命名</a>
               
             
           </h1>
@@ -772,12 +610,24 @@ libc.so.6 =&gt; /lib/libc.so.6 (0x00593000)
                 
               
 
-              <time title="创建时间：2019-05-06 14:28:18 / 修改时间：15:16:38" itemprop="dateCreated datePublished" datetime="2019-05-06T14:28:18+08:00">2019-05-06</time>
+              <time title="创建时间：2019-05-06 14:28:18" itemprop="dateCreated datePublished" datetime="2019-05-06T14:28:18+08:00">2019-05-06</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-08 21:32:30" itemprop="dateModified" datetime="2019-05-08T21:32:30+08:00">2019-05-08</time>
               
             
           </span>
@@ -812,12 +662,13 @@ libc.so.6 =&gt; /lib/libc.so.6 (0x00593000)
 
       
         
-          <h1 id="基本命令"><a href="#基本命令" class="headerlink" title="基本命令"></a>基本命令</h1><p>1：命令<code>pwd</code>  查询当前文件的绝对路径<br>2: 命令<code>cat</code>  查看文本文件<br>3: 命令<code>mkdir</code>  目录下新建一个文件夹,如：在/home/wwwroot目录下新建一个sinozzz123的文件夹，<code>mkdir /home/wwwroot/sinozzz123</code><br>4: 命令<code>cp</code> 复制文件或者目录，如：把/home/wwwroot/sinozzz里面的文件和文件夹等复制到home/wwwroot/sinozzz123目录下<code>cp -rf /home/wwwroot/sinozzz/* /home/wwwroot/sinozzz123</code> r表示目录的递归复制，f表示强制执行。<br>5： 命令<code>mv</code> 剪切文件或者目录,如需要将/home/music/目录下的1.mp3文件剪切到/home/abc目录下，执行下面的命令即可：<code># mv /home/music/1.mp3 /home/abc</code>。注：在Linux下，移动文件跟重命名都是同一个命令，mv（就是move的意思）<br>命令： mv 源文件名 目标文件名</p>
-<p>6：命令<code>rm</code>,删除文件或者目录,<code>rm -rf</code>   目录名字-r 就是向下递归，不管有多少级目录，一并删除。-f 就是直接强行删除，不作任何提示的意思。<br>7: 命令 <code>tar</code>, 解压压缩包，解压很简单 ：<br>|命令 |    |     格式解压为     |  具体命令 |<br>| :——| ——: | :——: |<br>|.tar.gz  |  格式解压为    |      tar   -zxvf   xx.tar.gz  –C 解压到指定目录 |<br>|.tar.bz2 | 格式解压为     |     tar   -jxvf    xx.tar.bz2|<br>其中：-x ： 解压缩压缩档案的参数；<br>-z ： 是否需要用gzip压缩；<br>  -v： 压缩的过程中显示档案；<br>-f： 置顶文档名，在f后面立即接文件名，不能再加参数</p>
+          <hr>
+<p>title: Linux学习（一）—常用命令<br>date: 2019-05-06 14:28:18</p>
+<h2 id="tags-Linux-基本命令"><a href="#tags-Linux-基本命令" class="headerlink" title="tags: Linux,基本命令"></a>tags: Linux,基本命令</h2>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2019/05/06/Linux学习/#more" rel="contents">
+              <a class="btn" href="/2019/05/06/Linux学习/" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -942,7 +793,7 @@ libc.so.6 =&gt; /lib/libc.so.6 (0x00593000)
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-06 22:17:48" itemprop="dateModified" datetime="2019-05-06T22:17:48+08:00">2019-05-06</time>
+                <time title="修改时间：2019-05-08 21:33:40" itemprop="dateModified" datetime="2019-05-08T21:33:40+08:00">2019-05-08</time>
               
             
           </span>
@@ -978,76 +829,11 @@ libc.so.6 =&gt; /lib/libc.so.6 (0x00593000)
       
         
           <h1 id="1-Hexo与GitHub"><a href="#1-Hexo与GitHub" class="headerlink" title="1 Hexo与GitHub"></a>1 Hexo与GitHub</h1><p><code>#</code>与标题之间有一个空格</p>
-<h2 id="1-1-Hexo与GitHub的的搭建"><a href="#1-1-Hexo与GitHub的的搭建" class="headerlink" title="1.1 Hexo与GitHub的的搭建"></a>1.1 Hexo与GitHub的的搭建</h2><p>详细教程<a href="https://blog.csdn.net/u011974987/article/details/51331822" target="_blank" rel="noopener">点击查看1</a>和<a href="https://blog.csdn.net/AinUser/article/details/77609180" target="_blank" rel="noopener">点击查看2</a><br>下面我讲一讲域名和GitHub Page的绑定，域名申请可以去<a href="https://wanwang.aliyun.com/?spm=5176.11106151.1280361.290.e26d6383FbCHCa" target="_blank" rel="noopener">阿里云</a>和<a href="https://cloud.tencent.com/search/%E5%9F%9F%E5%90%8D/1_1" target="_blank" rel="noopener">腾讯云</a><br>申请好域名之后：<br>第一步：在命令窗口ping一下：<code>ping dcl8023.github.io</code>得到如下图，说明可以链接到GitHub服务器，得到<code>ip:185.199.109.153</code><br><img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/1.png" alt="avatar"><br>第二步：添加要解析的域名，对于记录类型为A（将域名指向一个IPv4地址）分别要添加主机记录为www和@两个记录，记录值中添加刚才获得的<code>ip:185.199.109.153</code> 如图：<img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/4.png" alt="avatar">，据说如果GitHub改了IP之后就无法访问了，不稳定。而记录类型为CNAME的，也分别要添加主机记录为www和@两个记录，记录值中添加 <code>username.github.io.</code>,如图：<img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/2.png" alt="avatar"> <img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/3.png" alt="avatar"><br>第三步：在根目录source下新建一个README.md文件，将自己申请的域名复制进去<br>第四步：去GitHub你刚刚新建的库里设置，添加申请的域名，<img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/5.png" alt="avatar"><br>第五步：ping域名:<code>ping:www.dcpolar.xyz</code>,成功说明解析成功<br>然后hexo clean -&gt;hexo g -&gt;hexo d</p>
-<h3 id="1-2-Hexo的美化"><a href="#1-2-Hexo的美化" class="headerlink" title="1.2 Hexo的美化"></a>1.2 Hexo的美化</h3><p>美化教程参照<a href="https://reuixiy.github.io" target="_blank" rel="noopener">reuixiy的美化教程</a>和<a href="https://blog.csdn.net/qq_33699981/article/details/72716951" target="_blank" rel="noopener">JuLi距离的教程</a></p>
-<h4 id="1-2-1-在Hexo博客上添加可爱的Live-2D模型"><a href="#1-2-1-在Hexo博客上添加可爱的Live-2D模型" class="headerlink" title="1.2.1 在Hexo博客上添加可爱的Live 2D模型"></a>1.2.1 在Hexo博客上添加可爱的Live 2D模型</h4><p>1：live2d-widget-model-haru模型需要安装安装模块:<code>npm install --save hexo-helper-live2d</code><br>  试试 <code>yarn add hexo-helper-live2d</code>, 据说高能的 yarn 会比垃圾 npm 少很多麻烦呢。 Yarn<br>2:官方提供了多款精美的模型，<a href="https://huaji8.top/post/live2d-plugin-2.0/" target="_blank" rel="noopener">点击查看</a><br>你需要先使用 npm install 模型的包名 来安装，然后将包名输入位于<code>_config.yml</code> 的 <code>model.use</code> 中<br>3：配置内容可以直接配置在 Hexo 的配置文件 <code>_config.yml</code>中，也可以配置在主题的<code>Hexo根目录/themes/主题目录/_config.yml</code> 文件中，但推荐配置在 Hexo 的配置文件中，防止更换主题后 live2d 失效。复制下面代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">live2d:</span><br></pre></td></tr></table></figure></p>
-<pre><code>enable: true  
-scriptFrom: local
-model: 
-    use: live2d-widget-model-haruto #已经安装的模型选择
-display: 
-    position: right  #模型位置
-    width: 300       #模型宽度
-    height: 600      #模型高度
-mobile: 
-    show: true     #是否在手机端显示
-</code></pre><h1 id="2-MarkDown-与-文章编辑"><a href="#2-MarkDown-与-文章编辑" class="headerlink" title="2 MarkDown 与 文章编辑"></a>2 MarkDown 与 文章编辑</h1><h2 id="文章配置"><a href="#文章配置" class="headerlink" title="文章配置"></a>文章配置</h2><p>在hexo文件夹下右键点击Git Base here后键入<code>$hexo new page &quot;name&quot;</code>，source/_post 文件夹中生成name.md文件，和一个name的文件夹用来存储你的图片，将你要添加的图片放在这个文件夹下面，要想在博客上显示图片，在你的hexo目录下执行这样一句话<code>npm install hexo-asset-image --save</code>，这是下载安装一个可以上传本地图片的插件.之后你需要修改配置文件，把主页配置文件<code>_config.yml</code>里的post_asset_folder:这个选项设置为true，事先准备公国完成后就可以打开name.md文件编辑。MarkDown教程链接：<br><a href="http://www.runoob.com/markdown/md-tutorial.html" title="Markdown 教程" target="_blank" rel="noopener">http://www.runoob.com/markdown/md-tutorial.html </a>  或者用这种形式：<code>[链接名称](链接地址)</code> <a href="http://www.runoob.com/markdown/md-tutorial.html" target="_blank" rel="noopener">Markdown 教程</a></p>
-<h3 id="2-1-字体颜色显示与设置"><a href="#2-1-字体颜色显示与设置" class="headerlink" title="2.1 字体颜色显示与设置"></a>2.1 字体颜色显示与设置</h3><h4 id="2-1-1-文字的居中"><a href="#2-1-1-文字的居中" class="headerlink" title="2.1.1 文字的居中"></a>2.1.1 文字的居中</h4><p>对于标准的markdown文本，是不支持居中对齐的。还好markdown支持html语言，所以我们采用html语法格式即可。<br><code>&lt;center&gt;这一行需要居中&lt;/center&gt;</code><br>下面就是排版后的结果：<center>这一行需要居中</center></p>
-<h4 id="2-1-2-字体更换"><a href="#2-1-2-字体更换" class="headerlink" title="2.1.2 字体更换"></a>2.1.2 字体更换</h4><p>同样我们也需要遵照其标准的语法格式，格式如下：<code>&lt;font face=&quot;楷体&quot;&gt;我是楷体字&lt;/font&gt;</code>，下面是测试结果：  </p>
-<p><font face="楷体">我是楷体字</font><br>斜体及粗体的格式如下：<br><code>*斜体文本*</code>   </p>
-<p><code>_斜体文本_</code>  </p>
-<p><code>**粗体文本**</code>  </p>
-<p><code>__粗体文本__</code>  </p>
-<p><code>***粗斜体文本***</code>  </p>
-<p><code>___粗斜体文本___</code>  </p>
-<p> 显示效果如下所示：<br><em>斜体文本</em>  </p>
-<p><em>斜体文本</em>  </p>
-<p><strong>粗体文本</strong>  </p>
-<p><strong>粗体文本</strong>  </p>
-<p><strong><em>粗斜体文本</em></strong>  </p>
-<p><strong><em>粗斜体文本</em></strong></p>
-<h4 id="2-1-3-大小更换"><a href="#2-1-3-大小更换" class="headerlink" title="2.1.3 大小更换"></a>2.1.3 大小更换</h4><p>大小为size，格式如下：<code>&lt;font face=&quot;黑体&quot; size=10&gt;我是黑体字&lt;/font&gt;</code>,下面是测试结果：  </p>
-<p><font face="黑体" size="5">我是黑体字</font></p>
-<h4 id="2-1-3-颜色替换"><a href="#2-1-3-颜色替换" class="headerlink" title="2.1.3 颜色替换"></a>2.1.3 颜色替换</h4><p>颜色是用color来表示，所以可以表示如下<code>&lt;font color=red size=10&gt;颜色&lt;/font&gt;</code>,下面是测试结果：<font color="red" size="5">颜色</font></p>
-<h3 id="2-2-Markdown-段落"><a href="#2-2-Markdown-段落" class="headerlink" title="2.2 Markdown 段落"></a>2.2 Markdown 段落</h3><h4 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h4><p> 段落的换行是使用两个以上空格加上回车。</p>
-<h4 id="删除线"><a href="#删除线" class="headerlink" title="删除线"></a>删除线</h4><p>如果段落上的文字要添加删除线，在两端加上<code>~~</code>不知道为什么不行，另一种方法只需要在文字的两端加上两个 <code>&lt;del&gt;</code> 即可，实例如下：<code>&lt;del&gt;我想删除的一段话&lt;del&gt;</code>，显示效果如下所示：<del>我想删除的一段话<del>。</del></del></p>
-<h4 id="下划线"><a href="#下划线" class="headerlink" title="下划线"></a>下划线</h4><p>下划线可以通过 HTML的<code>&lt;u&gt;</code>标签来实现<code>&lt;u&gt;带下划线文本&lt;/u&gt;</code>显示效果如下所示：<u>带下划线文本</u>       </p>
-<p><font color="blue">附注：尽量不要给文本加下划线，因为这会和超链的表现形式混淆，会被误以为是个超链。</font></p>
-<h3 id="Markdown-代码"><a href="#Markdown-代码" class="headerlink" title="Markdown 代码"></a>Markdown 代码</h3><p> 如果是段落上的一个函数或片段的代码可以用反引号把它包起来（<code>），例如:</code>printf()`<br>代码块：代码之间分别用三个反引号包起来，且两边的反引号单独占一行,显示结果如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">代码...</span><br><span class="line">代码...</span><br><span class="line">代码...</span><br></pre></td></tr></table></figure>
-<h2 id="Markdown-图片"><a href="#Markdown-图片" class="headerlink" title="Markdown 图片"></a>Markdown 图片</h2><p>Markdown 图片语法格式如下：<code>![avatar](图片地址)</code> <code>![你想输入的替代文字](xxxx/图片名.jpg)</code> 两个都是一样的<br>开头一个感叹号 !接着一个方括号，里面放上图片的替代文字接着一个普通括号，里面放上图片的网址，最后还可以用引号包住并加上选择性的 ‘title’ 属性的文字。</p>
-<h3 id="插入本地图片"><a href="#插入本地图片" class="headerlink" title="插入本地图片"></a>插入本地图片</h3><p>只需要在基础语法的括号中填入图片的位置路径即可，支持绝对路径和相对路径。<br><code>![avatar](/cat.png)</code><br><code>![avatar](/cat_lovely.png)</code><br>显示结果如下：<img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/cat.png" alt="avatar">    <img src="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/cat_lovely.png" alt="avatar"></p>
-<h3 id="插入网络图片"><a href="#插入网络图片" class="headerlink" title="插入网络图片"></a>插入网络图片</h3><p>只需要在基础语法的括号中填入图片的网络链接即可，现在已经有很多免费/收费图床和方便传图的小工具可选。<br><code>![avatar](http://static.runoob.com/images/runoob-logo.png)</code><br>显示结果如下：<img src="http://static.runoob.com/images/runoob-logo.png" alt="avatar"></p>
-<h3 id="Markdown-表格"><a href="#Markdown-表格" class="headerlink" title="Markdown 表格"></a>Markdown 表格</h3><p>Markdown 制作表格使用 | 来分隔不同的单元格，使用 - 来分隔表头和其他行。在一句话前面加<code>&gt;</code>,表示引用，语法格式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">| 左对齐标题 | 右对齐标题 | 居中对齐标题 |</span><br><span class="line">| :------| ------: | :------: |</span><br><span class="line">| 短文本 | 中等文本 | 稍微长一点的文本 |</span><br><span class="line">| 稍微长一点的文本 | 短文本 | 中等文本 |</span><br></pre></td></tr></table></figure></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">左对齐标题</th>
-<th style="text-align:right">右对齐标题</th>
-<th style="text-align:center">居中对齐标题</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">短文本</td>
-<td style="text-align:right">中等文本</td>
-<td style="text-align:center">稍微长一点的文本</td>
-</tr>
-<tr>
-<td style="text-align:left">稍微长一点的文本</td>
-<td style="text-align:right">短文本</td>
-<td style="text-align:center">中等文本</td>
-</tr>
-</tbody>
-</table>
-<h3 id="分隔线"><a href="#分隔线" class="headerlink" title="分隔线"></a>分隔线</h3><p>你可以在一行中用三个以上的星号、减号、底线来建立一个分隔线，行内不能有其他东西。</p>
-<hr>
-<hr>
-<hr>
+<h2 id="1-1-Hexo与GitHub的的搭建"><a href="#1-1-Hexo与GitHub的的搭建" class="headerlink" title="1.1 Hexo与GitHub的的搭建"></a>1.1 Hexo与GitHub的的搭建</h2>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/#more" rel="contents">
+              <a class="btn" href="/2019/05/03/Hexo-GitHub-MarkDown完整搭建/" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1158,9 +944,7 @@ mobile:
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>
