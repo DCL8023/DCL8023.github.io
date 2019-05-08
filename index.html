@@ -463,7 +463,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-08 17:21:48" itemprop="dateModified" datetime="2019-05-08T17:21:48+08:00">2019-05-08</time>
+                <time title="修改时间：2019-05-08 19:29:10" itemprop="dateModified" datetime="2019-05-08T19:29:10+08:00">2019-05-08</time>
               
             
           </span>
@@ -498,8 +498,7 @@
 
       
         
-          
-            <h1 id="网盘设计步骤"><a href="#网盘设计步骤" class="headerlink" title="网盘设计步骤"></a>网盘设计步骤</h1><h2 id="一：fastDFS"><a href="#一：fastDFS" class="headerlink" title="一：fastDFS"></a>一：fastDFS</h2><h3 id="fastDFS概述："><a href="#fastDFS概述：" class="headerlink" title="fastDFS概述："></a>fastDFS概述：</h3><p>分布式存储简单的来说，就是将数据分散存储到多个存储设备(服务器)上。是用c语言编写的一款开源的分布式文件系统。FastDFS是一款类GoogleFS的开源分布式文件系统，GoogleFS以及FastDFS、mogileFS、HDFS、TFS等类GoogleFS都不是系统级的分布式文件系统，而是应用级的分布式文件存储服务。FastDFS是为互联网应用量身定做的分布式文件系统，充分考虑了冗余备份、负载均衡、线性扩容等机制，并注重高可用、高性能等指标。和现有的类Google FS分布式文件系统相比，FastDFS的架构和设计理念有其独到之处，主要体现在轻量级、分组方式和对等结构三个方面。<br>fastDFS框架中的三个角色:</p>
+          <h1 id="网盘设计步骤"><a href="#网盘设计步骤" class="headerlink" title="网盘设计步骤"></a>网盘设计步骤</h1><h2 id="一：fastDFS"><a href="#一：fastDFS" class="headerlink" title="一：fastDFS"></a>一：fastDFS</h2><h3 id="fastDFS概述："><a href="#fastDFS概述：" class="headerlink" title="fastDFS概述："></a>fastDFS概述：</h3><p>分布式存储简单的来说，就是将数据分散存储到多个存储设备(服务器)上。是用c语言编写的一款开源的分布式文件系统。FastDFS是一款类GoogleFS的开源分布式文件系统，GoogleFS以及FastDFS、mogileFS、HDFS、TFS等类GoogleFS都不是系统级的分布式文件系统，而是应用级的分布式文件存储服务。FastDFS是为互联网应用量身定做的分布式文件系统，充分考虑了冗余备份、负载均衡、线性扩容等机制，并注重高可用、高性能等指标。和现有的类Google FS分布式文件系统相比，FastDFS的架构和设计理念有其独到之处，主要体现在轻量级、分组方式和对等结构三个方面。<br>fastDFS框架中的三个角色:</p>
 <blockquote>
 <p>   追踪器 - tracker<br>   存储节点 - storage<br>   客户端 - client </p>
 </blockquote>
@@ -667,8 +666,15 @@ libc.so.6 =&gt; /lib/libc.so.6 (0x00593000)
 <p>通过fdfs_monitor /etc/fdfs/storage.conf<br>看看本台storage服务器是否处于ACTIVE状态。如果可以表示可以通过client上传和下载文件。 </p>
 <p>打开浏览器输入：<a href="http://192.168.31.109/group1/M00/00/00/wKgfbVhnpGSANaaNAAFbrNWRkBM855.jpg" target="_blank" rel="noopener">http://192.168.31.109/group1/M00/00/00/wKgfbVhnpGSANaaNAAFbrNWRkBM855.jpg</a> </p>
 <p>如果，得到图片显示，则表示storage已经成功配置Nginx服务。</p>
-
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/05/06/云盘项目-服务器端/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
